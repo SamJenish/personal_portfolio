@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sam Jenish C - Developer Portfolio</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Rounded", "Inter", "Segoe UI", sans-serif;
+      line-height: 1.6;
+      color: #111827;
+      background: #f5f5f7;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    #canvas-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .parallax-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(59,130,246,0.12) 0%, transparent 55%),
+        radial-gradient(circle at 90% 80%, rgba(45,212,191,0.14) 0%, transparent 55%),
+        #f5f5f7;
+      z-index: 0;
+      opacity: 0.7;
+    }
+
+    .parallax-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(209, 213, 219, 0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(209, 213, 219, 0.4) 1px, transparent 1px);
+      background-size: 32px 32px;
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+      z-index: 10;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(209, 213, 219, 0.8);
+      padding: 12px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 600;
+      color: #111827;
+      text-decoration: none;
+      letter-spacing: -0.4px;
+      white-space: nowrap;
+    }
+
+    .logo span {
+      font-size: 10px;
+      text-transform: uppercase;
+      display: block;
+      letter-spacing: 0.22em;
+      color: #16a34a;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      list-style: none;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      color: #4b5563;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 500;
+      transition: color 0.2s;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .nav-links a:hover {
+      color: #111827;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    .section {
+      padding: 96px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero {
+      min-height: 100vh;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 56px;
+      align-items: center;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      font-weight: 500;
+      color: #6b7280;
+      margin-bottom: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .hero-title-small {
+      font-size: 32px;
+      font-weight: 500;
+      color: #111827;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-title-big {
+      font-size: 54px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 16px;
+      letter-spacing: -1.6px;
+    }
+
+    .hero-text {
+      font-size: 15px;
+      color: #4b5563;
+      margin-bottom: 24px;
+      max-width: 520px;
+    }
+
+    .hero-metrics {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .metric {
+      min-width: 100px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 24px;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.1;
+    }
+
+    .metric span {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .social-icon-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .social-icon-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      background: rgba(248, 250, 252, 0.95);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: #111827;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+      backdrop-filter: blur(10px);
+      transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease,
+        background 0.28s ease,
+        color 0.28s ease,
+        padding 0.28s ease;
+      overflow: hidden;
+      white-space: nowrap;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+    }
+
+    .social-icon-btn svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .social-icon-btn span {
+      font-size: 12px;
+      margin-left: 0;
+      opacity: 0;
+      max-width: 0;
+      transition: opacity 0.25s ease, margin-left 0.25s ease, max-width 0.25s ease;
+    }
+
+    .social-icon-btn:hover {
+      transform: translateY(-1px);
+      background: #111827;
+      color: #f9fafb;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.25);
+      padding: 0 10px;
+      width: auto;
+    }
+
+    .social-icon-btn:hover span {
+      opacity: 1;
+      margin-left: 6px;
+      max-width: 70px;
+    }
+
+    .hero-photo-card {
+      background: #ffffff;
+      border-radius: 32px;
+      padding: 18px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-photo-inner {
+      border-radius: 24px;
+      background: #f3f4f6;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .hero-photo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .hero-photo-caption {
+      font-size: 13px;
+      color: #6b7280;
+      text-align: center;
+      margin-top: 6px;
+    }
+
+    .hero-resume-btn {
+      margin-top: 6px;
+      font-size: 12px;
+      padding: 8px 18px;
+    }
+
+    .section-inner {
+      width: 100%;
+    }
+
+    .section-tag {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #16a34a;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: 30px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      letter-spacing: -0.6px;
+      color: #111827;
+    }
+
+    .section-subtitle {
+      font-size: 15px;
+      color: #4b5563;
+      max-width: 720px;
+      margin-bottom: 28px;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 40px;
+      align-items: flex-start;
+    }
+
+    .timeline {
+      border-left: 1px solid #d1d5db;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .timeline-item {
+      position: relative;
+    }
+
+    .timeline-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #111827;
+      border: 2px solid #ffffff;
+      position: absolute;
+      left: -26px;
+      top: 4px;
+      box-shadow: 0 0 0 5px rgba(17, 24, 39, 0.12);
+    }
+
+    .timeline-role {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .timeline-meta {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .timeline-desc {
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .thing-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      padding: 18px 18px 16px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .thing-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #111827;
+    }
+
+    .thing-desc {
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    .project-card {
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #e5e7eb;
+      padding: 18px 18px 16px;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.07);
+    }
+
+    .project-card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #111827;
+    }
+
+    .project-card p {
+      font-size: 14px;
+      color: #4b5563;
+      margin-bottom: 8px;
+    }
+
+    .project-meta {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .skills-section {
+      position: relative;
+    }
+
+    .skills-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 40px;
+      align-items: center;
+      padding: 40px 0 16px;
+    }
+
+    .skills-text .section-subtitle {
+      margin-bottom: 16px;
+    }
+
+    .skills-visual {
+      min-height: 360px;
+    }
+
+    .scroll-hint {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .skills-detail {
+      margin-top: 40px;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 20px;
+    }
+
+    .skill-card {
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #e5e7eb;
+      padding: 18px 18px 16px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .skill-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #111827;
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .skill-tag {
+      font-size: 12px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .skills-3d-section {
+      padding: 72px 0 88px;
+    }
+
+    .skills-3d-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 40px;
+      align-items: center;
+    }
+
+    .skills-3d-visual-placeholder {
+      min-height: 320px;
+    }
+
+    .explore-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      border: none;
+      background: #111827;
+      color: #f9fafb;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.32);
+      transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .explore-btn:hover {
+      background: #020617;
+      transform: translateY(-1px);
+      box-shadow: 0 20px 48px rgba(15, 23, 42, 0.4);
+    }
+
+    .explore-btn-arrow {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .explore-btn-arrow svg {
+      width: 11px;
+      height: 11px;
+      color: #111827;
+    }
+
+    .contact-wrapper {
+      background: #ffffff;
+      border-radius: 24px;
+      border: 1px solid #e5e7eb;
+      padding: 32px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 32px;
+    }
+
+    .contact-title {
+      font-size: 30px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: -0.6px;
+      color: #111827;
+    }
+
+    .contact-text {
+      font-size: 15px;
+      color: #4b5563;
+      margin-bottom: 18px;
+      max-width: 400px;
+    }
+
+    .contact-email-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 10px;
+    }
+
+    .contact-email-address {
+      font-size: 14px;
+      color: #111827;
+    }
+
+    .copy-btn {
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: background 0.15s, color 0.15s, transform 0.15s;
+    }
+
+    .copy-btn:hover {
+      background: #111827;
+      color: #f9fafb;
+      transform: translateY(-1px);
+    }
+
+    .copy-status {
+      font-size: 12px;
+      color: #16a34a;
+      margin-top: 4px;
+      min-height: 16px;
+    }
+
+    .contact-form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+      color: #374151;
+    }
+
+    .field label {
+      font-weight: 500;
+    }
+
+    .field input,
+    .field textarea {
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      padding: 10px 12px;
+      font: inherit;
+      color: #111827;
+      background: #f9fafb;
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: #111827;
+      box-shadow: 0 0 0 1px #111827;
+      background: #ffffff;
+    }
+
+    .btn-primary {
+      padding: 10px 22px;
+      border-radius: 999px;
+      background: #111827;
+      color: #f9fafb;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-primary:hover {
+      background: #020617;
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.25);
+    }
+
+    footer {
+      background: #111827;
+      padding: 28px 0;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    footer p {
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .upcoming-card {
+      background: #ffffff;
+      border-radius: 32px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+      padding: 32px 32px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .upcoming-arrow-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+
+    .upcoming-arrow-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      background: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f9fafb;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.32);
+    }
+
+    .upcoming-arrow-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .upcoming-header {
+      text-align: center;
+    }
+
+    .upcoming-title {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.4px;
+      margin-bottom: 6px;
+      color: #111827;
+    }
+
+    .upcoming-subtitle {
+      font-size: 14px;
+      color: #4b5563;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .upcoming-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 4px;
+    }
+
+    .upcoming-card-item {
+      border-radius: 22px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      padding: 18px 18px 16px;
+    }
+
+    .upcoming-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #111827;
+    }
+
+    .upcoming-card-desc {
+      font-size: 13px;
+      color: #4b5563;
+    }
+
+    .upcoming-status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .upcoming-status-pill {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #111827;
+      color: #f9fafb;
+    }
+
+    .upcoming-status-pill.secondary {
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    @media (max-width: 900px) {
+      nav {
+        padding: 0 16px;
+      }
+
+      .container {
+        padding: 0 16px;
+      }
+
+      .hero-inner,
+      .two-column,
+      .contact-wrapper,
+      .skills-layout,
+      .skills-3d-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .hero-title-big {
+        font-size: 38px;
+      }
+
+      .hero-title-small {
+        font-size: 26px;
+      }
+
+      .section {
+        padding: 72px 0;
+      }
+
+      .skills-visual,
+      .skills-3d-visual-placeholder {
+        min-height: 260px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="parallax-bg"></div>
+  <div id="canvas-container"></div>
+
+  <div class="content">
+    <header>
+      <nav>
+        <a href="#about" class="logo">
+          Sam Jenish C
+          <span>Full Stack · Aspiring SDE · DevOps Enthusiast</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#experience">Experience</a></li>
+          <li><a href="#education">Education</a></li>
+          <li><a href="#things">Things I Do</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#upcoming">Upcoming</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="section hero" id="about">
+        <div class="container">
+          <div class="hero-inner">
+            <div>
+              <p class="subtitle">Full Stack · Aspiring SDE · DevOps Enthusiast</p>
+              <div class="hero-title-small">Hello, I'm</div>
+              <div class="hero-title-big">Sam Jenish C.</div>
+              <p class="hero-text">
+                I am a Computer Science student at Karunya University who loves turning ideas into working products.
+                I enjoy building full-stack applications, experimenting with DevOps workflows, and exploring AI/ML and
+                generative AI. Right now I am focused on sharpening my DSA, system design, and deployment skills so I
+                can grow into a strong Software Development Engineer.
+              </p>
+
+              <div class="hero-metrics">
+                <div class="metric">
+                  <strong>15+</strong>
+                  <span>Projects completed</span>
+                </div>
+                <div class="metric">
+                  <strong>2</strong>
+                  <span>Years of self-made projects</span>
+                </div>
+              </div>
+
+              <div class="hero-actions">
+                <div class="social-icon-row">
+                  <a href="https://github.com/SamJenish" class="social-icon-btn" target="_blank" aria-label="GitHub">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M12 .5C5.73.5.5 5.73.5 12.02c0 5.1 3.29 9.43 7.86 10.96.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.36-1.3-1.72-1.3-1.72-1.06-.72.08-.7.08-.7 1.17.08 1.79 1.2 1.79 1.2 1.04 1.79 2.73 1.27 3.4.97.11-.76.41-1.27.74-1.56-2.55-.29-5.23-1.28-5.23-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.45.11-3.02 0 0 .97-.31 3.18 1.18a11 11 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.57.24 2.73.12 3.02.74.81 1.19 1.84 1.19 3.1 0 4.42-2.68 5.39-5.24 5.68.42.36.8 1.1.8 2.22 0 1.6-.01 2.88-.01 3.27 0 .31.21.68.8.56A10.53 10.53 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/>
+                    </svg>
+                    <span>GitHub</span>
+                  </a>
+                  <a href="https://www.linkedin.com/in/sam-jenish-c-7bb25b350" class="social-icon-btn" target="_blank" aria-label="LinkedIn">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5.001 2.5 2.5 0 0 1 0-5.001ZM3 9h4v12H3V9Zm7 0h3.8v1.71h.05c.53-1 1.82-2.06 3.75-2.06 4.01 0 4.75 2.64 4.75 6.07V21H19v-5.17c0-1.23-.02-2.81-1.71-2.81-1.71 0-1.97 1.34-1.97 2.72V21h-4V9Z"/>
+                    </svg>
+                    <span>LinkedIn</span>
+                  </a>
+                  <a href="mailto:sammjenis@gmail.com" class="social-icon-btn" aria-label="Email">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 2-8 5-8-5h16Zm0 12H4V8l8 5 8-5v10Z"/>
+                    </svg>
+                    <span>Email</span>
+                  </a>
+                </div>
+                <button class="explore-btn" type="button" id="hero-explore-btn">
+                  Explore My Skills
+                  <span class="explore-btn-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M7 17L17 7"></path>
+                      <path d="M7 7h10v10"></path>
+                    </svg>
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <div class="hero-photo-card">
+              <div class="hero-photo-inner">
+                <img
+                  src="sample.jpeg"
+                  alt="Sam Jenish C"
+                  class="hero-photo-img"
+                />
+              </div>
+              <div class="hero-photo-caption">
+                CSE student at Karunya University, crafting full-stack products and exploring DevOps and AI step by step.
+              </div>
+              <a
+                href="https://flowcv.com/resume/141eb2fiec4s"
+                target="_blank"
+                class="btn-primary hero-resume-btn"
+              >
+                Resume
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXPERIENCE, EDUCATION, THINGS I DO – unchanged -->
+      <!-- (Sections omitted here are exactly the same as in your last code) -->
+
+      <!-- EXPERIENCE -->
+      <section class="section" id="experience">
+        <div class="container section-inner">
+          <div class="section-tag">Experience</div>
+          <div class="two-column">
+            <div>
+              <h2 class="section-title">Experience & roles.</h2>
+              <p class="section-subtitle">
+                A snapshot of internships, events, and projects that shaped how I build and think about software.
+              </p>
+            </div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-role">AI Intern, Internship Studio, Remote</div>
+                <div class="timeline-meta">Jul 2024 – Aug 2024</div>
+                <div class="timeline-desc">
+                  Worked on real-time video analysis using Python and OpenCV, processing live streams for object detection and motion-focused insights.
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-role">Cybersecurity Intern, Cisco Networking, Virtual</div>
+                <div class="timeline-meta">May 2024 – Jul 2024</div>
+                <div class="timeline-desc">
+                  Used Packet Tracer to explore networking concepts, firewall rules, and security monitoring, gaining exposure to core network security practices.
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-role">Hackathon Participation</div>
+                <div class="timeline-meta">2023 — Present</div>
+                <div class="timeline-desc">
+                  Participated in multiple college-level hackathons, solving real problems with teams under time pressure and experimenting with web, AI, and automation ideas.
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-role">Full-Stack Personal Projects</div>
+                <div class="timeline-meta">2024 — 2025</div>
+                <div class="timeline-desc">
+                  Built end-to-end applications using the MERN stack and related tools, with features like authentication, dashboards, API integrations, and CI/CD deployment.
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-role">MindKraft Event Coordination</div>
+                <div class="timeline-meta">2025</div>
+                <div class="timeline-desc">
+                  Coordinated MindKraft technical events, helping manage registrations, schedules, and on-ground execution while working closely with different teams.
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-role">DevOps Learning Phase</div>
+                <div class="timeline-meta">2025 — Present</div>
+                <div class="timeline-desc">
+                  Actively learning Docker, CI/CD pipelines, cloud platforms, monitoring and observability tools to bring production-style practices into my projects.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EDUCATION -->
+      <section class="section" id="education">
+        <div class="container section-inner">
+          <div class="section-tag">Education</div>
+          <div class="two-column">
+            <div>
+              <h2 class="section-title">Academic background.</h2>
+              <p class="section-subtitle">
+                The journey that built my fundamentals, discipline, and curiosity for engineering and problem solving.
+              </p>
+            </div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-role">B.Tech Computer Science and Engineering, Karunya University</div>
+                <div class="timeline-meta">2023 — Present · CGPA: 8.35</div>
+                <div class="timeline-desc">
+                  Coursework in data structures, algorithms, operating systems, databases, web technologies, and AI, while building full-stack and DevOps-driven projects in parallel.
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-role">Higher Secondary, SAV Balakrishna CBSE School</div>
+                <div class="timeline-meta">2021 — 2023 · Class 12: 85%</div>
+                <div class="timeline-desc">
+                  Completed senior secondary education with a focus on Computer Science and Mathematics, building the base for engineering and competitive programming.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- THINGS I DO -->
+      <section class="section" id="things">
+        <div class="container section-inner">
+          <div class="section-tag">Things I Do</div>
+          <h2 class="section-title">Blending engineering, design & operations.</h2>
+          <p class="section-subtitle">
+            These are the areas I keep exploring and improving as I move towards a strong SDE and DevOps profile.
+          </p>
+
+          <div class="cards-grid">
+            <div class="thing-card">
+              <div class="thing-title">Full-Stack Development</div>
+              <div class="thing-desc">
+                Building web apps end-to-end with React/Next.js, Node.js, and databases like MongoDB or MySQL.
+              </div>
+            </div>
+            <div class="thing-card">
+              <div class="thing-title">Cloud & DevOps</div>
+              <div class="thing-desc">
+                Containerizing services with Docker, deploying to cloud, and wiring up CI/CD pipelines for safe, repeatable releases.
+              </div>
+            </div>
+            <div class="thing-card">
+              <div class="thing-title">APIs & Backend Design</div>
+              <div class="thing-desc">
+                Designing REST APIs, authentication flows, validation layers, and logging/monitoring hooks.
+              </div>
+            </div>
+            <div class="thing-card">
+              <div class="thing-title">Problem Solving & DSA</div>
+              <div class="thing-desc">
+                Practicing algorithms and data structures to keep my thinking sharp and code efficient.
+              </div>
+            </div>
+            <div class="thing-card">
+              <div class="thing-title">AI / ML</div>
+              <div class="thing-desc">
+                Exploring machine learning models for classification, prediction, and pattern analysis using Python-based ecosystems.
+              </div>
+            </div>
+            <div class="thing-card">
+              <div class="thing-title">Generative AI</div>
+              <div class="thing-desc">
+                Working with large language models, prompt engineering, and integrating GenAI capabilities into web experiences.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TECHNICAL SKILLS (cards) -->
+      <section class="section skills-section" id="skills">
+        <div class="container section-inner">
+          <div class="skills-layout">
+            <div class="skills-text">
+              <div class="section-tag">Skills</div>
+              <h2 class="section-title">Technical Skills</h2>
+              <p class="section-subtitle">
+                An overview of the technologies I use across full-stack development,
+                DevOps, AI/ML and computer science fundamentals.
+              </p>
+              <div class="scroll-hint">
+                Scroll further down to see the 3D skill grid
+              </div>
+            </div>
+            <div class="skills-visual"></div>
+          </div>
+
+          <div class="skills-detail" id="skills-detail">
+            <div class="skills-grid" id="skills-grid">
+              <div class="skill-card">
+                <div class="skill-card-title">Programming Languages</div>
+                <div class="skill-tags">
+                  <span class="skill-tag">JavaScript</span>
+                  <span class="skill-tag">TypeScript</span>
+                  <span class="skill-tag">Python</span>
+                  <span class="skill-tag">Java</span>
+                  <span class="skill-tag">C</span>
+                </div>
+              </div>
+
+              <div class="skill-card">
+                <div class="skill-card-title">Frameworks & Libraries</div>
+                <div class="skill-tags">
+                  <span class="skill-tag">React</span>
+                  <span class="skill-tag">Node.js</span>
+                  <span class="skill-tag">Express</span>
+                  <span class="skill-tag">Next.js</span>
+                  <span class="skill-tag">Tailwind CSS</span>
+                </div>
+              </div>
+
+              <div class="skill-card">
+                <div class="skill-card-title">Web & Full Stack</div>
+                <div class="skill-tags">
+                  <span class="skill-tag">MERN Stack</span>
+                  <span class="skill-tag">REST APIs</span>
+                  <span class="skill-tag">JWT Auth</span>
+                  <span class="skill-tag">Responsive UI</span>
+                  <span class="skill-tag">MongoDB</span>
+                  <span class="skill-tag">MySQL</span>
+                </div>
+              </div>
+
+              <div class="skill-card">
+                <div class="skill-card-title">DevOps & Cloud</div>
+                <div class="skill-tags">
+                  <span class="skill-tag">Docker</span>
+                  <span class="skill-tag">CI/CD</span>
+                  <span class="skill-tag">GitHub Actions</span>
+                  <span class="skill-tag">Linux</span>
+                  <span class="skill-tag">AWS Basics</span>
+                  <span class="skill-tag">Monitoring & Logs</span>
+                </div>
+              </div>
+
+              <div class="skill-card">
+                <div class="skill-card-title">AI / ML & GenAI</div>
+                <div class="skill-tags">
+                  <span class="skill-tag">Python ML</span>
+                  <span class="skill-tag">Scikit-learn</span>
+                  <span class="skill-tag">OpenCV Basics</span>
+                  <span class="skill-tag">Prompt Engineering</span>
+                  <span class="skill-tag">LLM Tools</span>
+                </div>
+              </div>
+
+              <div class="skill-card">
+                <div class="skill-card-title">CS Fundamentals</div>
+                <div class="skill-tags">
+                  <span class="skill-tag">Data Structures</span>
+                  <span class="skill-tag">Algorithms</span>
+                  <span class="skill-tag">Object-Oriented Design</span>
+                  <span class="skill-tag">Operating Systems</span>
+                  <span class="skill-tag">Computer Networks</span>
+                  <span class="skill-tag">Database Concepts</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3D SKILL GRID SECTION (text left, cubes right) -->
+      <section class="section skills-3d-section" id="skills-3d">
+        <div class="container section-inner">
+          <div class="skills-3d-layout">
+            <div>
+              <div class="section-tag">Skills</div>
+              <h2 class="section-title">3D Skill Grid</h2>
+              <p class="section-subtitle">
+                Scroll through this area to watch the tech stack cubes align into a clean 3×3 grid on
+                the right side of the screen.
+              </p>
+            </div>
+            <div class="skills-3d-visual-placeholder"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROJECTS / UPCOMING / CONTACT remain unchanged -->
+
+      <section class="section" id="projects">
+        <div class="container section-inner">
+          <div class="section-tag">Projects</div>
+          <h2 class="section-title">Selected work.</h2>
+          <p class="section-subtitle">
+            A few projects that show how I think about design, engineering, and DevOps together.
+          </p>
+
+          <div class="cards-grid">
+            <div class="project-card">
+              <h3>Observability Platform</h3>
+              <p>
+                Unified metrics, logs, and traces with alerting and deployment-aware context to
+                speed up incident resolution.
+              </p>
+              <div class="project-meta">Node.js · React · Time-series DB · Docker</div>
+            </div>
+            <div class="project-card">
+              <h3>Cloud-Native Commerce</h3>
+              <p>
+                Event-driven microservices on Kubernetes with auto-scaling, blue/green deployments,
+                and Git-based infrastructure.
+              </p>
+              <div class="project-meta">Spring Boot · Kafka · Kubernetes · CI/CD</div>
+            </div>
+            <div class="project-card">
+              <h3>Developer Portal</h3>
+              <p>
+                Internal portal to spin up new services, pipelines, and environments from templates,
+                improving developer experience.
+              </p>
+              <div class="project-meta">Next.js · Node.js · Docker · GitHub Actions</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="upcoming">
+        <div class="container section-inner">
+          <div class="upcoming-card">
+            <div class="upcoming-arrow-wrapper">
+              <div class="upcoming-arrow-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M7 17L17 7"></path>
+                  <path d="M7 7h10v10"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="upcoming-header">
+              <div class="section-tag" style="margin-bottom:6px;">Upcoming</div>
+              <div class="upcoming-title">Upcoming & Ongoing Projects</div>
+              <p class="upcoming-subtitle">
+                I am constantly experimenting with new ideas. Here are some active tracks where I am building AI/ML, GenAI, DevOps pipelines, and full-stack products.
+              </p>
+            </div>
+            <div class="upcoming-cards">
+              <div class="upcoming-card-item">
+                <div class="upcoming-card-title">AI/ML & GenAI Projects</div>
+                <div class="upcoming-card-desc">
+                  Experiments with computer vision, model-based predictions, and LLM-powered assistants integrated into web interfaces.
+                </div>
+              </div>
+              <div class="upcoming-card-item">
+                <div class="upcoming-card-title">DevOps & Cloud Pipelines</div>
+                <div class="upcoming-card-desc">
+                  Setting up containerized services, CI/CD workflows, and monitoring dashboards to make deployments smoother and more reliable.
+                </div>
+              </div>
+              <div class="upcoming-card-item">
+                <div class="upcoming-card-title">Full-Stack Product Builds</div>
+                <div class="upcoming-card-desc">
+                  Building MERN-based applications with clean UI, authentication, role-based flows, and scalable backend APIs.
+                </div>
+              </div>
+            </div>
+            <div class="upcoming-status-row">
+              <span class="upcoming-status-pill">In Development</span>
+              <span class="upcoming-status-pill secondary">Research Phase</span>
+              <span class="upcoming-status-pill secondary">Testing</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="contact">
+        <div class="container section-inner">
+          <div class="section-tag">Contact</div>
+          <div class="contact-wrapper">
+            <div>
+              <div class="contact-title">Let’s work together.</div>
+              <p class="contact-text">
+                Whether you’re planning a new product, improving an existing system, or just want
+                to talk about ideas, feel free to reach out. I’m always open to collaborations,
+                internships, and interesting opportunities.
+              </p>
+
+              <div class="contact-email-row">
+                <span class="contact-email-address">sammjenis@gmail.com</span>
+                <button id="copy-email-btn" class="copy-btn" type="button">Copy</button>
+              </div>
+              <div id="copy-status" class="copy-status"></div>
+
+              <div class="social-icon-row">
+                <a href="https://github.com/SamJenish" class="social-icon-btn" target="_blank" aria-label="GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M12 .5C5.73.5.5 5.73.5 12.02c0 5.1 3.29 9.43 7.86 10.96.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.36-1.3-1.72-1.3-1.72-1.06-.72.08-.7.08-.7 1.17.08 1.79 1.2 1.79 1.2 1.04 1.79 2.73 1.27 3.4.97.11-.76.41-1.27.74-1.56-2.55-.29-5.23-1.28-5.23-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.45.11-3.02 0 0 .97-.31 3.18 1.18a11 11 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.57.24 2.73.12 3.02.74.81 1.19 1.84 1.19 3.1 0 4.42-2.68 5.39-5.24 5.68.42.36.8 1.1.8 2.22 0 1.6-.01 2.88-.01 3.27 0 .31.21.68.8.56A10.53 10.53 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/>
+                  </svg>
+                  <span>GitHub</span>
+                </a>
+                <a href="https://www.linkedin.com/in/sam-jenish-c-7bb25b350" class="social-icon-btn" target="_blank" aria-label="LinkedIn">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5.001 2.5 2.5 0 0 1 0-5.001ZM3 9h4v12H3V9Zm7 0h3.8v1.71h.05c.53-1 1.82-2.06 3.75-2.06 4.01 0 4.75 2.64 4.75 6.07V21H19v-5.17c0-1.23-.02-2.81-1.71-2.81-1.71 0-1.97 1.34-1.97 2.72V21h-4V9Z"/>
+                  </svg>
+                  <span>LinkedIn</span>
+                </a>
+                <a href="mailto:sammjenis@gmail.com" class="social-icon-btn" aria-label="Email">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 2-8 5-8-5h16Zm0 12H4V8l8 5 8-5v10Z"/>
+                  </svg>
+                  <span>Email</span>
+                </a>
+              </div>
+            </div>
+
+            <form class="contact-form" onsubmit="event.preventDefault(); alert('Static demo form. Connect this to a backend or Formspree.');">
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" type="text" placeholder="Your name" />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" type="email" placeholder="you@example.com" />
+              </div>
+              <div class="field">
+                <label for="message">Message</label>
+                <textarea id="message" placeholder="Tell me a bit about what you have in mind"></textarea>
+              </div>
+              <button type="submit" class="btn-primary">
+                Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>© 2024 Sam Jenish C · Portfolio.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0);
+    document.getElementById("canvas-container").appendChild(renderer.domElement);
+
+    camera.position.z = 40;
+
+    const skills = [
+      { name: "MERN",     color: 0x4ade80 },
+      { name: "Python",   color: 0x6ee7b7 },
+      { name: "React",    color: 0x67e8f9 },
+      { name: "Docker",   color: 0x93c5fd },
+      { name: "CI/CD",    color: 0xa7f3d0 },
+      { name: "AWS",      color: 0xfbbf24 },
+      { name: "Node.js",  color: 0x22c55e },
+      { name: "MongoDB",  color: 0x34d399 },
+      { name: "GraphQL",  color: 0xf472b6 }
+    ];
+
+    const GRID_OFFSET_X = 18;  // push cubes more to the right side
+    const boxes = [];
+
+    function createTextTexture(text) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext("2d");
+
+      ctx.fillStyle = "#f9fafb";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font =
+        "bold 96px -apple-system, BlinkMacSystemFont, SF Pro Display, SF Pro Rounded, Inter, sans-serif";
+
+      ctx.shadowColor = "rgba(15,23,42,0.35)";
+      ctx.shadowBlur = 10;
+
+      ctx.fillStyle = "#111827";
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    skills.forEach((skill, i) => {
+      const geometry = new THREE.BoxGeometry(6.5, 6.5, 6.5);
+
+      const materials = [];
+      for (let j = 0; j < 6; j++) {
+        if (j === 4) {
+          const texture = createTextTexture(skill.name);
+          materials.push(
+            new THREE.MeshBasicMaterial({
+              map: texture,
+              transparent: true,
+              opacity: 0,
+              toneMapped: false
+            })
+          );
+        } else {
+          materials.push(
+            new THREE.MeshPhysicalMaterial({
+              color: skill.color,
+              metalness: 0.4,
+              roughness: 0.45,
+              transparent: true,
+              opacity: 0.5,
+              clearcoat: 1,
+              clearcoatRoughness: 0.15,
+              emissive: skill.color,
+              emissiveIntensity: 0.05
+            })
+          );
+        }
+      }
+
+      const box = new THREE.Mesh(geometry, materials);
+
+      const angle = (i / skills.length) * Math.PI * 2;
+      const radius = 26;
+      box.position.x =
+        Math.cos(angle) * radius + (Math.random() - 0.5) * 14 + GRID_OFFSET_X;
+      box.position.y = Math.sin(angle) * radius + (Math.random() - 0.5) * 14;
+      box.position.z = (Math.random() - 0.5) * 20;
+
+      box.rotation.x = Math.random() * Math.PI;
+      box.rotation.y = Math.random() * Math.PI;
+      box.rotation.z = Math.random() * Math.PI;
+
+      const cols = 3;
+      const rows = Math.ceil(skills.length / cols);
+      const colIndex = i % cols;
+      const rowIndex = Math.floor(i / cols);
+
+      const spacing = 10.5;
+      const offsetX = -((cols - 1) * spacing) / 2 + GRID_OFFSET_X;
+      const offsetY = ((rows - 1) * spacing) / 2;
+
+      box.userData = {
+        originalPos: box.position.clone(),
+        originalRot: new THREE.Euler(
+          box.rotation.x,
+          box.rotation.y,
+          box.rotation.z
+        ),
+        targetPos: new THREE.Vector3(
+          offsetX + colIndex * spacing,
+          offsetY - rowIndex * spacing + 2, // slight upward shift
+          0
+        ),
+        targetRot: new THREE.Euler(0, 0, 0),
+        index: i
+      };
+
+      scene.add(box);
+      boxes.push(box);
+    });
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
+
+    const mainLight = new THREE.DirectionalLight(0xffffff, 0.9);
+    mainLight.position.set(12, 14, 18);
+    scene.add(mainLight);
+
+    const rimLight = new THREE.DirectionalLight(0x22d3ee, 0.7);
+    rimLight.position.set(-12, 5, -10);
+    scene.add(rimLight);
+
+    let scrollProgress = 0;
+
+    function updateScroll() {
+      const skills3dSection = document.getElementById("skills-3d");
+      const section = skills3dSection || document.getElementById("skills");
+      if (!section) return;
+
+      const rect = section.getBoundingClientRect();
+      const sectionHeight = section.offsetHeight;
+      const windowHeight = window.innerHeight;
+
+      const sectionCenter = rect.top + sectionHeight / 2;
+      const viewportCenter = windowHeight / 2;
+      const distance = Math.abs(sectionCenter - viewportCenter);
+      const maxDistance = sectionHeight / 2;
+
+      let progress;
+      if (distance >= maxDistance) {
+        progress = 0;
+      } else {
+        progress = 1 - distance / maxDistance;
+      }
+
+      scrollProgress = Math.max(0, Math.min(1, progress));
+
+      const parallaxBg = document.querySelector(".parallax-bg");
+      parallaxBg.style.transform = `translateY(${window.scrollY * 0.12}px)`;
+    }
+
+    window.addEventListener("scroll", updateScroll);
+
+    function easeInOutCubic(t) {
+      return t < 0.5
+        ? 4 * t * t * t
+        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const smoothProgress = easeInOutCubic(scrollProgress);
+
+      boxes.forEach((box, index) => {
+        const delay = index * 0.03;
+
+        if (smoothProgress < 0.05) {
+          box.visible = false;
+          return;
+        } else {
+          box.visible = true;
+        }
+
+        const base = Math.max(0, smoothProgress - delay);
+        let adjustedProgress = Math.max(0, Math.min(1, base / (1 - delay)));
+
+        const targetX = THREE.MathUtils.lerp(
+          box.userData.originalPos.x,
+          box.userData.targetPos.x,
+          adjustedProgress
+        );
+        const targetY = THREE.MathUtils.lerp(
+          box.userData.originalPos.y,
+          box.userData.targetPos.y,
+          adjustedProgress
+        );
+        const targetZ = THREE.MathUtils.lerp(
+          box.userData.originalPos.z,
+          box.userData.targetPos.z,
+          adjustedProgress
+        );
+
+        const lerpFactor = 0.08;
+        box.position.x += (targetX - box.position.x) * lerpFactor;
+        box.position.y += (targetY - box.position.y) * lerpFactor;
+        box.position.z += (targetZ - box.position.z) * lerpFactor;
+
+        if (adjustedProgress < 0.75) {
+          const rotSpeed = 0.02 * (1 - adjustedProgress);
+          box.rotation.x += rotSpeed;
+          box.rotation.y += rotSpeed * 0.7;
+        } else {
+          box.rotation.x +=
+            (box.userData.targetRot.x - box.rotation.x) * 0.14;
+          box.rotation.y +=
+            (box.userData.targetRot.y - box.rotation.y) * 0.14;
+          box.rotation.z +=
+            (box.userData.targetRot.z - box.rotation.z) * 0.14;
+        }
+
+        const scale = 0.85 + 0.35 * adjustedProgress;
+        box.scale.set(scale, scale, scale);
+
+        box.material.forEach((mat) => {
+          if (mat instanceof THREE.MeshBasicMaterial) {
+            const textOpacity =
+              adjustedProgress <= 0.6
+                ? 0
+                : (adjustedProgress - 0.6) / 0.4;
+            mat.opacity = Math.max(0, Math.min(1, textOpacity));
+          } else if (mat.opacity !== undefined) {
+            mat.opacity = 0.25 + 0.75 * adjustedProgress;
+            mat.emissiveIntensity = 0.05 + 0.3 * adjustedProgress;
+          }
+        });
+      });
+
+      const cameraOffset = smoothProgress * 3;
+      camera.position.y += (cameraOffset - camera.position.y) * 0.06;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Smooth scroll for navbar links
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener("click", function (e) {
+        e.preventDefault();
+        const href = this.getAttribute("href");
+        const target = document.querySelector(href);
+        if (target) {
+          target.scrollIntoView({
+            behavior: "smooth",
+            block: href === "#skills" ? "start" : "start"
+          });
+        }
+      });
+    });
+
+    // Hero "Explore My Skills" button
+    const heroExploreBtn = document.getElementById("hero-explore-btn");
+    if (heroExploreBtn) {
+      heroExploreBtn.addEventListener("click", () => {
+        const skillsSection = document.getElementById("skills");
+        if (skillsSection) {
+          skillsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+    }
+
+    updateScroll();
+
+    // COPY EMAIL BUTTON
+    const copyBtn = document.getElementById('copy-email-btn');
+    const copyStatus = document.getElementById('copy-status');
+    const emailToCopy = 'sammjenis@gmail.com';
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', async () => {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(emailToCopy);
+            copyStatus.textContent = 'Email copied!';
+          } else {
+            const tempInput = document.createElement('input');
+            tempInput.value = emailToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            copyStatus.textContent = 'Email copied!';
+          }
+        } catch (e) {
+          copyStatus.textContent = 'Could not copy, please copy manually.';
+        }
+
+        setTimeout(() => {
+          copyStatus.textContent = '';
+        }, 1800);
+      });
+    }
+  </script>
+</body>
+</html>

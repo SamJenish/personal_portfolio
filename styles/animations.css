@@ -1,0 +1,201 @@
+/* ═══════════════════════════════════════════════
+   ANIMATIONS — Sam Jenish Portfolio (Redesign)
+   Clean, no-glow, editorial feel
+═══════════════════════════════════════════════ */
+
+/* ── Scroll Reveal ── */
+.reveal-up,
+.reveal-left,
+.reveal-right {
+    opacity: 0;
+    transition:
+        opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal-up {
+    transform: translateY(24px);
+}
+
+.reveal-left {
+    transform: translateX(-24px);
+}
+
+.reveal-right {
+    transform: translateX(24px);
+}
+
+.reveal-up.visible,
+.reveal-left.visible,
+.reveal-right.visible {
+    opacity: 1;
+    transform: translate(0);
+}
+
+/* Delay helpers */
+.delay-1 {
+    transition-delay: 0.08s;
+}
+
+.delay-2 {
+    transition-delay: 0.16s;
+}
+
+.delay-3 {
+    transition-delay: 0.24s;
+}
+
+.delay-4 {
+    transition-delay: 0.32s;
+}
+
+.delay-5 {
+    transition-delay: 0.40s;
+}
+
+/* ── Page load ── */
+body {
+    animation: page-in 0.4s ease both;
+}
+
+@keyframes page-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ── Skill bar ── */
+@keyframes fill-bar {
+    from {
+        width: 0 !important;
+    }
+
+    to {
+        width: var(--w) !important;
+    }
+}
+
+.skill-fill.animated {
+    animation: fill-bar 1.1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ── Skills tab panel ── */
+.skills-panel.active {
+    animation: panel-in 0.25s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Bounce (scroll indicator) ── */
+@keyframes bounce-down {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(6px);
+    }
+}
+
+/* ── Subtle hero grid fade ── */
+.hero::before {
+    animation: grid-fade 1.2s ease both;
+}
+
+@keyframes grid-fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 0.4;
+    }
+}
+
+/* ── Section tag line ── */
+.section-tag::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 2px;
+    background: var(--accent, #d4621a);
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-right: 8px;
+    margin-bottom: 1px;
+}
+
+/* ── Nav link underline ── */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 14px;
+    right: 14px;
+    height: 1.5px;
+    background: var(--accent, #d4621a);
+    border-radius: 1px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    transform: scaleX(1);
+}
+
+/* ── Form loading spinner ── */
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.btn-loading::after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    animation: spinner 0.7s linear infinite;
+    display: inline-block;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .reveal-up,
+    .reveal-left,
+    .reveal-right {
+        opacity: 1;
+        transform: none;
+    }
+}

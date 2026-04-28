@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-accent: #ffffff; /* pure white for absolute contrast */
+  --color-neutral-800: #1f1f1f;
+  --color-neutral-900: #121212;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  background-color: #050505; /* Deeper black */
+  color: #ededed;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #050505;
+  color: #ededed;
+  cursor: none;
+}
+
+a, button, [data-cursor] {
+  cursor: none;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #050505;
+}
+
+.border-b-thin {
+  border-bottom: 1px solid var(--color-neutral-800);
+}
+
+.border-t-thin {
+  border-top: 1px solid var(--color-neutral-800);
+}
+
+.border-r-thin {
+  border-right: 1px solid var(--color-neutral-800);
+}
+
+.border-l-thin {
+  border-left: 1px solid var(--color-neutral-800);
+}
